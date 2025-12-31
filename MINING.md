@@ -26,9 +26,17 @@ wine kryptex.exe
 ### 2. Hoặc dùng xmrig để mine trực tiếp vào Kryptex Pool:
 
 ```bash
-# Xem hướng dẫn tại: https://pool.kryptex.com/articles/ubuntu-gpu-mining-en
+# Thay YOUR_WALLET_ADDRESS bằng địa chỉ ví Monero của bạn
 xmrig -o pool.kryptex.com:7777 -u YOUR_WALLET_ADDRESS -p x --coin monero
+
+# Ví dụ:
+# xmrig -o pool.kryptex.com:7777 -u 48abc123...xyz -p x --coin monero
 ```
+
+**Lưu ý:** 
+- Hiện tại đang **benchmark** (test), chưa đào thật
+- Cần thay `YOUR_WALLET_ADDRESS` bằng địa chỉ ví thật
+- Có lỗi MSR module → hashrate sẽ thấp hơn (không ảnh hưởng việc đào)
 
 ### 3. Tải Kryptex Miner mới nhất:
 
