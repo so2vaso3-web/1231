@@ -29,31 +29,13 @@
         touch /home/user/.cleanup_done
       fi
 
-      # Check if Windows container can run (requires Windows host)
-      if docker info 2>/dev/null | grep -q "Operating System.*Windows"; then
-        echo "Windows host detected - using Windows container"
-        CONTAINER_NAME="windows-rdp"
-        IMAGE="danielguerra/ubuntu-xrdp"
-        
-        # For Windows, we'll use a Linux container with Windows-like environment
-        # or use Windows Server Core with RDP
-        IMAGE="mcr.microsoft.com/windows/servercore:ltsc2022"
-      else
-        echo "Linux host detected - using Windows-like container"
-        # Use a container that provides Windows-like experience on Linux
-        CONTAINER_NAME="windows-novnc"
-        IMAGE="danielguerra/windows-xrdp"
-      fi
+      CONTAINER_NAME="windows-novnc"
+      IMAGE="thuonghai2711/ubuntu-novnc-pulseaudio:22.04"
 
       # Pull and start container
       if ! docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
-        echo "Đang tải Windows container image..."
-        docker pull "$IMAGE" || {
-          echo "Trying alternative Windows-like container..."
-          IMAGE="accetto/ubuntu-vnc-xfce"
-          CONTAINER_NAME="windows-novnc"
-          docker pull "$IMAGE"
-        }
+        echo "Đang tải container image..."
+        docker pull "$IMAGE"
         
         echo "Đang khởi động container..."
         docker run --name "$CONTAINER_NAME" \
@@ -62,8 +44,12 @@
           -p 10000:10000 \
           -e VNC_PASSWD=12345678 \
           -e PORT=10000 \
+          -e AUDIO_PORT=1699 \
+          -e WEBSOCKIFY_PORT=6900 \
+          -e VNC_PORT=5900 \
           -e SCREEN_WIDTH=1024 \
           -e SCREEN_HEIGHT=768 \
+          -e SCREEN_DEPTH=24 \
           "$IMAGE"
       else
         docker start "$CONTAINER_NAME" || true
@@ -72,6 +58,19 @@
       # Wait for container to be ready
       echo "Đang chờ container sẵn sàng..."
       while ! nc -z localhost 10000; do sleep 1; done
+
+      # Install Chrome and Wine (to run .exe files)
+      echo "Đang cài đặt Chrome và Wine (để chạy file .exe)..."
+      docker exec -it "$CONTAINER_NAME" bash -lc "
+        sudo apt update -qq &&
+        sudo apt remove -y firefox 2>/dev/null || true &&
+        sudo apt install -y wget wine64 wine32 winetricks -qq &&
+        sudo wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
+        sudo apt install -y /tmp/chrome.deb -qq &&
+        sudo rm -f /tmp/chrome.deb &&
+        winecfg &>/dev/null || true &&
+        winetricks -q corefonts vcrun2019 2>/dev/null || true
+      " 2>/dev/null || echo "Installation skipped or already done"
 
       # Run Cloudflared tunnel
       echo "Đang khởi động Cloudflared tunnel..."
@@ -92,20 +91,25 @@
       if [ -n "$URL" ]; then
         echo ""
         echo "========================================="
-        echo " 🌍 Windows VPS đã sẵn sàng:"
+        echo " 🌍 VPS đã sẵn sàng (Ubuntu + Wine):"
         echo "   $URL"
         echo "  Mật khẩu VPS: 12345678"
+        echo ""
+        echo "  ⚠️  Lưu ý: Đây là Ubuntu + Wine"
+        echo "  ✅ Có thể chạy file .exe bằng Wine"
+        echo "  ✅ Đã cài sẵn Wine, Chrome"
         echo "=========================================="
         echo ""
       else
         echo "Local URL: http://localhost:10000"
         echo "Password: 12345678"
+        echo "Đã cài Wine để chạy .exe"
       fi
 
       # Keep script alive
       elapsed=0
       while true; do 
-        echo "Windows VPS đang chạy... Đã chạy: $elapsed phút"
+        echo "VPS đang chạy... Đã chạy: $elapsed phút"
         ((elapsed++))
         sleep 60
       done
