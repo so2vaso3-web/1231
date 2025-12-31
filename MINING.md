@@ -6,6 +6,14 @@
 2. **xmrig** - CPU miner cho Kryptex Pool
 3. **Kryptex Miner** - Đã tải về tại `~/mining/kryptex/kryptex.exe`
 
+## Cài đặt (nếu auto-install chưa chạy):
+
+Nếu thấy lỗi "wine: command not found" hoặc "xmrig: command not found", chạy:
+
+```bash
+bash install-mining.sh
+```
+
 ## Cách sử dụng:
 
 ### 1. Chạy Kryptex Miner (Windows .exe qua Wine):
