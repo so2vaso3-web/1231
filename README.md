@@ -1,23 +1,63 @@
-# RKVM - Ubuntu 22.04 VM Setup
+# VPS FREE - Auto Setup
+
+VPS miễn phí với Ubuntu Desktop + noVNC + Cloudflare Tunnel. **Chỉ cần mở workspace là tự động setup!**
+
+## ⚡ Cách sử dụng nhanh (Auto Setup)
+
+**Chỉ cần mở repository này trong môi trường hỗ trợ `.idx` (Cursor, GitHub Codespaces, etc.)**
+
+1. Mở repository trong workspace hỗ trợ `.idx`
+2. Hệ thống tự động:
+   - Cài Docker, Cloudflared
+   - Pull và chạy Ubuntu container
+   - Cài Chrome browser
+   - Tạo Cloudflare Tunnel
+   - Hiển thị URL và password
+
+3. Truy cập VPS qua URL được hiển thị hoặc Preview panel
+   - **Password**: `12345678`
+
+**Không cần chạy bất kỳ lệnh nào! Tự động hết! 🎉**
+
+---
+
+## 📦 Tính năng chính
+
+- ✅ **Auto Setup** - Tự động setup khi mở workspace
+- ✅ **Ubuntu Desktop GUI** - Giao diện đồ họa đầy đủ
+- ✅ **Cloudflare Tunnel** - Truy cập từ bất kỳ đâu
+- ✅ **Chrome Browser** - Đã cài sẵn
+- ✅ **noVNC** - Truy cập qua trình duyệt web
+- ✅ **Hoàn toàn miễn phí**
+
+---
+
+## 🔧 Các script khác (Tùy chọn)
+
+### VPS FREE cho Windows
+
+Script tạo VPS miễn phí với Docker + noVNC
+
+**Phiên bản Local:**
+```powershell
+.\vps-windows.ps1
+```
+
+**Phiên bản với Cloudflare Tunnel:**
+```powershell
+.\vps-windows-cloudflare.ps1
+```
+
+### Ubuntu VM với QEMU/KVM
 
 Script tự động tạo và chạy Ubuntu 22.04 Virtual Machine với QEMU/KVM.
 
-## Tính năng
-
-- Tự động tải Ubuntu 22.04 cloud image
-- Cấu hình cloud-init với user/password sẵn
-- Hỗ trợ cả chế độ Console và GUI
-- SSH port forwarding (port 24)
-
-## Yêu cầu
-
+**Yêu cầu:**
 - Linux với KVM support (hoặc QEMU trên Windows/Mac)
 - QEMU/KVM
 - cloud-localds (cloud-utils)
 
-## Cách sử dụng
-
-### 1. Chế độ Console (mặc định - không có GUI)
+### 1. Ubuntu VM - Chế độ Console (mặc định - không có GUI)
 
 ```bash
 bash vm.sh
@@ -27,7 +67,7 @@ bash vm.sh
 - Username: `root` hoặc `ubuntu`
 - Password: `root` hoặc `ubuntu`
 
-### 2. Chế độ GUI (có giao diện đồ họa)
+### 2. Ubuntu VM - Chế độ GUI (có giao diện đồ họa)
 
 Có 2 cách:
 
