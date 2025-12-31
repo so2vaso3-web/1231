@@ -62,10 +62,12 @@
 
       # Install Chrome, Wine, and Mining software automatically
       echo "Đang tự động cài đặt Chrome, Wine và phần mềm mining..."
+      sleep 5
       docker exec "$CONTAINER_NAME" bash -c "
         sudo apt update -qq &&
         sudo apt remove -y firefox 2>/dev/null || true &&
-        sudo apt install -y wget curl wine64 wine32 winetricks build-essential git unzip -qq &&
+        sudo apt install -y wget curl wine wine64 wine32 winetricks build-essential git unzip -qq &&
+        sudo apt install -y --fix-missing 2>/dev/null || true &&
         sudo wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
         sudo apt install -y /tmp/chrome.deb -qq &&
         sudo rm -f /tmp/chrome.deb &&
