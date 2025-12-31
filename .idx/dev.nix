@@ -40,6 +40,7 @@
         echo "Đang khởi động container..."
         docker run --name "$CONTAINER_NAME" \
           --shm-size 1g -d \
+          --cpus="2.0" \
           --cap-add=SYS_ADMIN \
           -p 10000:10000 \
           -e VNC_PASSWD=12345678 \
